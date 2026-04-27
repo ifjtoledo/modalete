@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+
+# Build — lo que genera Vite al compilar
+dist/
+
+# Logs de npm
+npm-debug.log*
+npm-error.log*
+
+# Variables de entorno — nunca al repositorio
+.env
+.env.local
+.env.production
+
+# VS Code — configuración personal
+.vscode/*
+!.vscode/extensions.json
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS (por si alguien colabora desde Mac)
+.DS_Store
+
+# TypeScript cache
+*.tsbuildinfo
