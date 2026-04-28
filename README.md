@@ -32,7 +32,7 @@ const ok = await modal.dialog({
 });
 
 if (ok) {
-  // user confirmed
+  // user confirmed — do your fetch, delete, etc.
 } else {
   // user cancelled
 }
@@ -59,25 +59,57 @@ Opens the modal manually without a Promise.
 
 Closes the modal manually.
 
-## Keyboard
+## Events
 
-| Key | Action |
-|---|---|
-| `Escape` | Cancels and closes the modal |
-| `Tab` | Navigates between buttons |
+`modalete` dispatches Custom Events on the `<modalete-dialog>` element that bubble up through the DOM.
+
+```typescript
+document.addEventListener('modalete:confirm', (e) => {
+  console.log('User confirmed:', e.detail);
+  // e.detail → { title: string, message: string }
+});
+
+document.addEventListener('modalete:cancel', (e) => {
+  console.log('User cancelled:', e.detail);
+});
+```
+
+| Event | When | `e.detail` |
+|---|---|---|
+| `modalete:confirm` | User clicks confirm button | `{ title, message }` |
+| `modalete:cancel` | User clicks cancel or presses Escape | `{ title, message }` |
 
 ## TypeScript
 
 Types are included out of the box:
 
 ```typescript
-import type { DialogOptions } from 'modalete';
+import type { DialogOptions, ModaleteConfirmDetail } from 'modalete';
 
 const options: DialogOptions = {
   title:   'Are you sure?',
   message: 'This cannot be undone.'
 };
+
+document.addEventListener('modalete:confirm', (e: CustomEvent<ModaleteConfirmDetail>) => {
+  console.log(e.detail.title);
+});
 ```
+
+## Keyboard
+
+| Key | Action |
+|---|---|
+| `Escape` | Cancels and closes the modal |
+| `Tab` | Navigates forward between buttons — trapped inside modal |
+| `Shift + Tab` | Navigates backward between buttons — trapped inside modal |
+
+## Accessibility
+
+- `role="dialog"` and `aria-modal="true"` on the backdrop
+- Focus moves to cancel button on open
+- Focus returns to the triggering element on close
+- Full keyboard navigation with focus trap
 
 ## Browser support
 

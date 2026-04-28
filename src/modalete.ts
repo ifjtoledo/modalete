@@ -1,5 +1,4 @@
-import type { DialogOptions, ModaleteAPI } from './modalete.types';
-
+import type { DialogOptions, ModaleteAPI, ModaleteConfirmDetail } from './modalete.types';
 class ModaleteDialog extends HTMLElement implements ModaleteAPI {
 
     private shadow: ShadowRoot;
@@ -59,11 +58,13 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
     // ═══════════════════════════════════════
 
     private handleConfirm(): void {
+        this.dispatchModaleteEvent('modalete:confirm');
         this.resolver?.(true);
         this.cleanup();
     }
 
     private handleCancel(): void {
+        this.dispatchModaleteEvent('modalete:cancel');
         this.resolver?.(false);
         this.cleanup();
     }
@@ -74,7 +75,18 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
         this.triggerer?.focus();
         this.triggerer = null;
     }
+    private dispatchModaleteEvent(type: 'modalete:confirm' | 'modalete:cancel'): void {
+        const detail: ModaleteConfirmDetail = {
+            title: this.shadow.querySelector('[data-modalete-title]')?.textContent ?? '',
+            message: this.shadow.querySelector('[data-modalete-message]')?.textContent ?? '',
+        };
 
+        this.dispatchEvent(new CustomEvent(type, {
+            detail,
+            bubbles: true,
+            composed: true,
+        }));
+    }
     private bindEvents(): void {
         this.shadow
             .querySelector('[data-modalete-confirm]')

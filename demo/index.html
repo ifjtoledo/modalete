@@ -74,6 +74,7 @@
         const btnDemo = document.querySelector('[data-btn-demo]');
         const resultado = document.querySelector('[data-resultado]');
 
+        // ─── API principal — await ───────────────────────────────
         btnDemo.addEventListener('click', async () => {
             const ok = await modal.dialog({
                 title: '¿Eliminar registro?',
@@ -85,6 +86,15 @@
             resultado.textContent = ok
                 ? '✅ El usuario confirmó'
                 : '❌ El usuario canceló';
+        });
+
+        // ─── CustomEvent — escucha global ────────────────────────
+        document.addEventListener('modalete:confirm', (e) => {
+            console.log('📢 modalete:confirm disparado', e.detail);
+        });
+
+        document.addEventListener('modalete:cancel', (e) => {
+            console.log('📢 modalete:cancel disparado', e.detail);
         });
     </script>
 </body>
