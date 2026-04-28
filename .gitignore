@@ -26,3 +26,4 @@ Desktop.ini
 
 # TypeScript cache
 *.tsbuildinfo
+.history
