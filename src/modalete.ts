@@ -41,16 +41,35 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
     open(): void {
         this.setAttribute('open', '');
         const backdrop = this.shadow.querySelector<HTMLElement>('[data-modalete-backdrop]');
-        if (backdrop) backdrop.style.display = 'flex';
+        if (backdrop) {
+            backdrop.style.display = 'flex';
+            // forzamos reflow para que el navegador registre el display:flex
+            // antes de agregar la clase que dispara la animación
+            backdrop.offsetHeight;
+            backdrop.classList.add('is-open');
+        }
 
         const btnCancel = this.shadow.querySelector<HTMLElement>('[data-modalete-cancel]');
         btnCancel?.focus();
     }
 
     close(): void {
-        this.removeAttribute('open');
         const backdrop = this.shadow.querySelector<HTMLElement>('[data-modalete-backdrop]');
-        if (backdrop) backdrop.style.display = 'none';
+        if (!backdrop) return;
+
+        backdrop.classList.remove('is-open');
+        backdrop.classList.add('is-closing');
+
+        // esperamos que termine la animación de salida
+        backdrop.addEventListener(
+            'animationend',
+            () => {
+                backdrop.classList.remove('is-closing');
+                backdrop.style.display = 'none';
+                this.removeAttribute('open');
+            },
+            { once: true } // ← se autodestruye después de ejecutarse una vez
+        );
     }
 
     // ═══════════════════════════════════════
@@ -151,78 +170,117 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
 
     private renderShell(): void {
         this.shadow.innerHTML = `
-            <style>
-                .modalete-backdrop {
-                    display:          none;
-                    position:         fixed;
-                    inset:            0;
-                    background:       rgba(0, 0, 0, 0.6);
-                    justify-content:  center;
-                    align-items:      center;
-                    z-index:          1000;
-                }
-                .modalete {
-                    background:    #1e1e1e;
-                    border:        1px solid #2f3032;
-                    border-radius: 12px;
-                    padding:       28px;
-                    width:         min(360px, 90vw);
-                    font-family:   "Open Sans", "Segoe UI", sans-serif;
-                    box-shadow:    0 8px 32px rgba(0, 0, 0, 0.5);
-                }
-                .modalete__title {
-                    margin:      0 0 12px 0;
-                    font-size:   1.1rem;
-                    font-weight: 700;
-                    color:       #f0f0ea;
-                }
-                .modalete__message {
-                    margin:      0 0 20px 0;
-                    font-size:   0.9rem;
-                    color:       #e6edf3;
-                    line-height: 1.5;
-                }
-                .modalete__actions {
-                    display:         flex;
-                    justify-content: flex-end;
-                    gap:             8px;
-                }
-                .modalete__btn {
-                    padding:       10px 20px;
-                    border:        none;
-                    border-radius: 4px;
-                    font-family:   inherit;
-                    font-size:     0.875rem;
-                    font-weight:   600;
-                    cursor:        pointer;
-                    transition:    opacity 120ms;
-                }
-                .modalete__btn:hover   { opacity: 0.85; }
-                .modalete__btn:focus-visible {
-                    outline:        2px solid #3eb4ff;
-                    outline-offset: 2px;
-                }
-                .modalete__btn--confirm {
-                    background: #3eb4ff;
-                    color:      #111315;
-                }
-                .modalete__btn--cancel {
-                    background: #4a4b4e;
-                    color:      #f0f0ea;
-                }
-            </style>
+        <style>
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to   { opacity: 1; }
+            }
 
-            <div class="modalete-backdrop" data-modalete-backdrop role="dialog" aria-modal="true">
-                <div class="modalete">
-                    <h2  class="modalete__title"   data-modalete-title></h2>
-                    <p   class="modalete__message" data-modalete-message></p>
-                    <div class="modalete__actions">
-                        <button class="modalete__btn modalete__btn--cancel" data-modalete-cancel data-modalete-focusable></button>
-                        <button class="modalete__btn modalete__btn--confirm" data-modalete-confirm data-modalete-focusable></button>
-                    </div>
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to   { opacity: 0; }
+            }
+
+            @keyframes slideDown {
+                from { opacity: 0; transform: translateY(-24px); }
+                to   { opacity: 1; transform: translateY(0);     }
+            }
+
+            @keyframes slideUp {
+                from { opacity: 1; transform: translateY(0);     }
+                to   { opacity: 0; transform: translateY(-24px); }
+            }
+
+            .modalete-backdrop {
+                display:         none;
+                position:        fixed;
+                inset:           0;
+                background:      rgba(0, 0, 0, 0.6);
+                justify-content: center;
+                align-items:     center;
+                z-index:         1000;
+            }
+
+            .modalete-backdrop.is-open {
+                display:   flex;
+                animation: fadeIn 180ms ease forwards;
+            }
+
+            .modalete-backdrop.is-open .modalete {
+                animation: slideDown 220ms ease forwards;
+            }
+
+            .modalete-backdrop.is-closing {
+                display:   flex;
+                animation: fadeOut 160ms ease forwards;
+            }
+
+            .modalete-backdrop.is-closing .modalete {
+                animation: slideUp 160ms ease forwards;
+            }
+
+            .modalete {
+                background:    #1e1e1e;
+                border:        1px solid #2f3032;
+                border-radius: 12px;
+                padding:       28px;
+                width:         min(360px, 90vw);
+                font-family:   "Open Sans", "Segoe UI", sans-serif;
+                box-shadow:    0 8px 32px rgba(0, 0, 0, 0.5);
+            }
+            .modalete__title {
+                margin:      0 0 12px 0;
+                font-size:   1.1rem;
+                font-weight: 700;
+                color:       #f0f0ea;
+            }
+            .modalete__message {
+                margin:      0 0 20px 0;
+                font-size:   0.9rem;
+                color:       #e6edf3;
+                line-height: 1.5;
+            }
+            .modalete__actions {
+                display:         flex;
+                justify-content: flex-end;
+                gap:             8px;
+            }
+            .modalete__btn {
+                padding:       10px 20px;
+                border:        none;
+                border-radius: 4px;
+                font-family:   inherit;
+                font-size:     0.875rem;
+                font-weight:   600;
+                cursor:        pointer;
+                transition:    opacity 120ms;
+            }
+            .modalete__btn:hover        { opacity: 0.85; }
+            .modalete__btn:focus-visible {
+                outline:        2px solid #3eb4ff;
+                outline-offset: 2px;
+            }
+            .modalete__btn--confirm {
+                background: #3eb4ff;
+                color:      #111315;
+            }
+            .modalete__btn--cancel {
+                background: #4a4b4e;
+                color:      #f0f0ea;
+            }
+        </style>
+
+        <div class="modalete-backdrop" data-modalete-backdrop role="dialog" aria-modal="true">
+            <div class="modalete">
+                <h2  class="modalete__title"   data-modalete-title></h2>
+                <p   class="modalete__message" data-modalete-message></p>
+                <div class="modalete__actions">
+                    <button class="modalete__btn modalete__btn--cancel"  data-modalete-cancel  data-modalete-focusable></button>
+                    <button class="modalete__btn modalete__btn--confirm" data-modalete-confirm data-modalete-focusable></button>
                 </div>
             </div>
-        `;
+        </div>
+    `;
     }
 }
 

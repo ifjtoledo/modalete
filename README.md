@@ -110,7 +110,16 @@ document.addEventListener('modalete:confirm', (e: CustomEvent<ModaleteConfirmDet
 - Focus moves to cancel button on open
 - Focus returns to the triggering element on close
 - Full keyboard navigation with focus trap
+## Animations
 
+`modalete` includes built-in enter and exit animations out of the box.
+
+- **Open** → backdrop fades in, dialog slides down from above
+- **Close** → dialog slides up, backdrop fades out
+
+No configuration needed — animations run automatically.
+
+To disable animations, target the Shadow DOM parts with your own CSS (coming in a future release).
 ## Browser support
 
 All modern browsers that support Custom Elements v1 and Shadow DOM.

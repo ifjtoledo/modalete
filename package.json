@@ -1,6 +1,6 @@
 {
   "name": "modalete",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A lightweight Web Component modal dialog with Promise-based API",
   "type": "module",
   "main": "./dist/modalete.umd.cjs",
