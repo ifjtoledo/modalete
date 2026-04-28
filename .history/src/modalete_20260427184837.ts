@@ -96,35 +96,7 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
             { signal: this.controller.signal }
         );
     }
-    private bindFocusTrap(): void {
-        document.addEventListener(
-            'keydown',
-            (e: KeyboardEvent) => {
-                if (!this.hasAttribute('open')) return;
-                if (e.key !== 'Tab') return;
-                const focusables = Array.from(
-                    this.shadow.querySelectorAll<HTMLElement>('[data-modalete-focusable]')
-                );
-                const first = focusables[0];
-                const last = focusables[focusables.length - 1];
 
-                if (e.shiftKey) {
-                    // Shift+Tab — viene del primero, manda al último
-                    if (this.shadow.activeElement === first) {
-                        e.preventDefault();
-                        last.focus();
-                    }
-                } else {
-                    // Tab — viene del último, manda al primero
-                    if (this.shadow.activeElement === last) {
-                        e.preventDefault();
-                        first.focus();
-                    }
-                }
-            },
-            { signal: this.controller.signal }
-        );
-    }
     private fillContent(options: DialogOptions): void {
         const title = this.shadow.querySelector('[data-modalete-title]');
         const message = this.shadow.querySelector('[data-modalete-message]');
@@ -205,8 +177,8 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
                     <h2  class="modalete__title"   data-modalete-title></h2>
                     <p   class="modalete__message" data-modalete-message></p>
                     <div class="modalete__actions">
-                        <button class="modalete__btn modalete__btn--cancel" data-modalete-cancel data-modalete-focusable></button>
-                        <button class="modalete__btn modalete__btn--confirm" data-modalete-confirm data-modalete-focusable></button>
+                        <button class="modalete__btn modalete__btn--cancel"  data-modalete-cancel></button>
+                        <button class="modalete__btn modalete__btn--confirm" data-modalete-confirm></button>
                     </div>
                 </div>
             </div>

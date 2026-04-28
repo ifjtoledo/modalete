@@ -205,8 +205,8 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
                     <h2  class="modalete__title"   data-modalete-title></h2>
                     <p   class="modalete__message" data-modalete-message></p>
                     <div class="modalete__actions">
-                        <button class="modalete__btn modalete__btn--cancel" data-modalete-cancel data-modalete-focusable></button>
-                        <button class="modalete__btn modalete__btn--confirm" data-modalete-confirm data-modalete-focusable></button>
+                        <button class="modalete__btn modalete__btn--cancel"  data-modalete-cancel></button>
+                        <button class="modalete__btn modalete__btn--confirm" data-modalete-confirm></button>
                     </div>
                 </div>
             </div>

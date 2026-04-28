@@ -14,12 +14,8 @@ export interface ModaleteConfirmDetail {
     title: string;
     message: string;
 }
-export interface ModaleteConfirmDetail {
-    title: string;
-    message: string;
-}
 
-export interface ModaleteEventMap {
+export interface MoaleteEventMap {
     'modalete:confirm': CustomEvent<ModaleteConfirmDetail>;
     'modalete:cancel': CustomEvent<ModaleteConfirmDetail>;
 }

@@ -102,9 +102,11 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
             (e: KeyboardEvent) => {
                 if (!this.hasAttribute('open')) return;
                 if (e.key !== 'Tab') return;
+
                 const focusables = Array.from(
-                    this.shadow.querySelectorAll<HTMLElement>('[data-modalete-focusable]')
+                    this.shadow.querySelectorAll<HTMLElement>('button')
                 );
+
                 const first = focusables[0];
                 const last = focusables[focusables.length - 1];
 
@@ -205,8 +207,8 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
                     <h2  class="modalete__title"   data-modalete-title></h2>
                     <p   class="modalete__message" data-modalete-message></p>
                     <div class="modalete__actions">
-                        <button class="modalete__btn modalete__btn--cancel" data-modalete-cancel data-modalete-focusable></button>
-                        <button class="modalete__btn modalete__btn--confirm" data-modalete-confirm data-modalete-focusable></button>
+                        <button class="modalete__btn modalete__btn--cancel"  data-modalete-cancel></button>
+                        <button class="modalete__btn modalete__btn--confirm" data-modalete-confirm></button>
                     </div>
                 </div>
             </div>
