@@ -171,21 +171,31 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
     private renderShell(): void {
         this.shadow.innerHTML = `
         <style>
+            :host {
+                --modalete-bg:                #1e1e1e;
+                --modalete-border:            #2f3032;
+                --modalete-radius:            12px;
+                --modalete-title-color:       #f0f0ea;
+                --modalete-message-color:     #e6edf3;
+                --modalete-backdrop-bg:       rgba(0, 0, 0, 0.6);
+                --modalete-btn-confirm-bg:    #3eb4ff;
+                --modalete-btn-confirm-color: #111315;
+                --modalete-btn-cancel-bg:     #4a4b4e;
+                --modalete-btn-cancel-color:  #f0f0ea;
+            }
+
             @keyframes fadeIn {
                 from { opacity: 0; }
                 to   { opacity: 1; }
             }
-
             @keyframes fadeOut {
                 from { opacity: 1; }
                 to   { opacity: 0; }
             }
-
             @keyframes slideDown {
                 from { opacity: 0; transform: translateY(-24px); }
                 to   { opacity: 1; transform: translateY(0);     }
             }
-
             @keyframes slideUp {
                 from { opacity: 1; transform: translateY(0);     }
                 to   { opacity: 0; transform: translateY(-24px); }
@@ -195,34 +205,30 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
                 display:         none;
                 position:        fixed;
                 inset:           0;
-                background:      rgba(0, 0, 0, 0.6);
+                background:      var(--modalete-backdrop-bg);
                 justify-content: center;
                 align-items:     center;
                 z-index:         1000;
             }
-
             .modalete-backdrop.is-open {
                 display:   flex;
                 animation: fadeIn 180ms ease forwards;
             }
-
             .modalete-backdrop.is-open .modalete {
                 animation: slideDown 220ms ease forwards;
             }
-
             .modalete-backdrop.is-closing {
                 display:   flex;
                 animation: fadeOut 160ms ease forwards;
             }
-
             .modalete-backdrop.is-closing .modalete {
                 animation: slideUp 160ms ease forwards;
             }
 
             .modalete {
-                background:    #1e1e1e;
-                border:        1px solid #2f3032;
-                border-radius: 12px;
+                background:    var(--modalete-bg);
+                border:        1px solid var(--modalete-border);
+                border-radius: var(--modalete-radius);
                 padding:       28px;
                 width:         min(360px, 90vw);
                 font-family:   "Open Sans", "Segoe UI", sans-serif;
@@ -232,12 +238,12 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
                 margin:      0 0 12px 0;
                 font-size:   1.1rem;
                 font-weight: 700;
-                color:       #f0f0ea;
+                color:       var(--modalete-title-color);
             }
             .modalete__message {
                 margin:      0 0 20px 0;
                 font-size:   0.9rem;
-                color:       #e6edf3;
+                color:       var(--modalete-message-color);
                 line-height: 1.5;
             }
             .modalete__actions {
@@ -257,16 +263,16 @@ class ModaleteDialog extends HTMLElement implements ModaleteAPI {
             }
             .modalete__btn:hover        { opacity: 0.85; }
             .modalete__btn:focus-visible {
-                outline:        2px solid #3eb4ff;
+                outline:        2px solid var(--modalete-btn-confirm-bg);
                 outline-offset: 2px;
             }
             .modalete__btn--confirm {
-                background: #3eb4ff;
-                color:      #111315;
+                background: var(--modalete-btn-confirm-bg);
+                color:      var(--modalete-btn-confirm-color);
             }
             .modalete__btn--cancel {
-                background: #4a4b4e;
-                color:      #f0f0ea;
+                background: var(--modalete-btn-cancel-bg);
+                color:      var(--modalete-btn-cancel-color);
             }
         </style>
 
